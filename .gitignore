@@ -1,31 +1,31 @@
-# PyInstaller Build Output
-build/
-dist/
-*.spec.bak
+# Generic .gitignore for C++/Python/Windows Desktop Apps
 
-# Python Bytecode & Caches
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-
-# Environments
 venv/
 env/
-ENV/
+.env
 
-# Large Video & Image Files (Test Assets)
-*.mp4
-*.mkv
-*.avi
-*.mov
-*.wmv
+# C++ / Visual Studio
+.vs/
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+x64/
+x86/
+Debug/
+Release/
 
-# IDE & OS Files
-.vscode/
-.idea/
+# Build folders
+build/
+dist/
+
+# OS Files
 .DS_Store
 Thumbs.db
-
-# Gemini / Antigravity workspace files
-.gemini/
+ehthumbs.db
