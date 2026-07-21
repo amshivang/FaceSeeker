@@ -272,6 +272,8 @@ class FaceSeekerApp(ctk.CTk):
         self.minsize(980, 680)
         self.configure(fg_color="#202020")
 
+        # Multi-Target Subject Storage List
+        # Format: [{'id': int, 'name': str, 'path': str, 'embedding': np.ndarray, 'crop_pil': PIL.Image, 'quality': str}]
         self.target_subjects = []
         self.video_path = None
 
@@ -283,11 +285,13 @@ class FaceSeekerApp(ctk.CTk):
         self.stop_event = threading.Event()
         self.pause_event = threading.Event()
 
+        # Models
         self.face_detector = None
         self.face_recognizer = None
         self._init_ai_models()
         self._check_default_files()
 
+        # Build UI layout
         self._build_header()
         self._build_input_section()
         self._build_action_bar()
@@ -350,6 +354,7 @@ class FaceSeekerApp(ctk.CTk):
         input_container.columnconfigure(0, weight=6)
         input_container.columnconfigure(1, weight=5)
 
+        # LEFT: MULTI-TARGET SUBJECTS CONTAINER
         self.target_card = ctk.CTkFrame(input_container, fg_color="#2b2b2b", corner_radius=8, border_width=1, border_color="#3a3a3a")
         self.target_card.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
 
@@ -377,11 +382,13 @@ class FaceSeekerApp(ctk.CTk):
         )
         btn_add_target.pack(side="right")
 
+        # Scrollable row of Target Subject chips/avatars
         self.target_chips_frame = ctk.CTkScrollableFrame(self.target_card, fg_color="transparent", height=70, orientation="horizontal")
         self.target_chips_frame.pack(fill="x", padx=10, pady=(2, 8))
 
         self._render_target_chips()
 
+        # RIGHT: VIDEO FILE SELECTION
         video_card = ctk.CTkFrame(input_container, fg_color="#2b2b2b", corner_radius=8, border_width=1, border_color="#3a3a3a")
         video_card.grid(row=0, column=1, padx=(8, 0), sticky="nsew")
 
@@ -424,6 +431,7 @@ class FaceSeekerApp(ctk.CTk):
             self._load_video_metadata(self.video_path)
 
     def _render_target_chips(self):
+        """Render target subject cards inside target chips frame."""
         for child in self.target_chips_frame.winfo_children():
             child.destroy()
 
@@ -439,12 +447,14 @@ class FaceSeekerApp(ctk.CTk):
             chip = ctk.CTkFrame(self.target_chips_frame, fg_color="#1f1f1f", corner_radius=6, border_width=1, border_color="#383838")
             chip.pack(side="left", padx=5, pady=4)
 
+            # Avatar image
             crop_pil = target.get("crop_pil")
             if crop_pil:
                 crop_ctk = ctk.CTkImage(light_image=crop_pil, dark_image=crop_pil, size=(48, 48))
                 lbl_img = ctk.CTkLabel(chip, image=crop_ctk, text="", corner_radius=4)
                 lbl_img.pack(side="left", padx=6, pady=6)
 
+            # Info labels
             info_box = ctk.CTkFrame(chip, fg_color="transparent")
             info_box.pack(side="left", padx=(0, 8), pady=4)
 
@@ -454,6 +464,7 @@ class FaceSeekerApp(ctk.CTk):
             lbl_qual = ctk.CTkLabel(info_box, text=target["quality"], font=ctk.CTkFont(family="Segoe UI", size=10), text_color="#adadad", anchor="w")
             lbl_qual.pack(anchor="w")
 
+            # Remove button
             btn_del = ctk.CTkButton(
                 chip,
                 text="✖",
@@ -621,6 +632,7 @@ class FaceSeekerApp(ctk.CTk):
         body_frame.columnconfigure(1, weight=5)
         body_frame.rowconfigure(0, weight=1)
 
+        # LEFT PANE: LIVE VIDEO PREVIEW
         preview_pane = ctk.CTkFrame(body_frame, fg_color="#2b2b2b", corner_radius=8, border_width=1, border_color="#3a3a3a")
         preview_pane.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
 
@@ -728,6 +740,7 @@ class FaceSeekerApp(ctk.CTk):
         self.thresh_slider.set(self.match_threshold)
         self.thresh_slider.pack(side="left", fill="x", expand=True)
 
+        # RIGHT PANE: DETECTED MATCHES GALLERY
         gallery_pane = ctk.CTkFrame(body_frame, fg_color="#2b2b2b", corner_radius=8, border_width=1, border_color="#3a3a3a")
         gallery_pane.grid(row=0, column=1, padx=(8, 0), sticky="nsew")
 
@@ -790,6 +803,10 @@ class FaceSeekerApp(ctk.CTk):
             text_color="#adadad"
         )
         self.empty_matches_label.pack(pady=50)
+
+    # -------------------------------------------------------------------------
+    # USER ACTION HANDLERS
+    # -------------------------------------------------------------------------
 
     def _select_video_file(self):
         choice = messagebox.askyesnocancel("Video Source Selection", "Click 'YES' to select a Single Video File.\nClick 'NO' to select a Folder of Video Files for Batch Scanning.")
@@ -924,6 +941,10 @@ class FaceSeekerApp(ctk.CTk):
         self.lbl_fps.configure(text="⚡ 0.0 FPS")
         self.lbl_eta.configure(text="⏳ ETA: --:--")
 
+    # -------------------------------------------------------------------------
+    # BACKGROUND WORKER THREAD (MULTI-TARGET MATCHING)
+    # -------------------------------------------------------------------------
+
     def _analysis_worker(self):
         cap = cv2.VideoCapture(self.video_path)
         if not cap.isOpened():
@@ -950,7 +971,9 @@ class FaceSeekerApp(ctk.CTk):
             except Exception as e:
                 print("Error initializing thread detector/recognizer:", e)
 
+        # Collect target subjects with valid embeddings
         valid_targets = [t for t in self.target_subjects if t.get("embedding") is not None]
+
         frame_step = 2
 
         while cap.isOpened():
@@ -1008,6 +1031,7 @@ class FaceSeekerApp(ctk.CTk):
                         aligned = thread_recognizer.alignCrop(frame, scaled_face)
                         feat = thread_recognizer.feature(aligned)
 
+                        # Match against ALL loaded target subjects!
                         for target in valid_targets:
                             score = float(thread_recognizer.match(target["embedding"], feat, cv2.FaceRecognizerSF_FR_COSINE))
 
@@ -1088,6 +1112,10 @@ class FaceSeekerApp(ctk.CTk):
         cap.release()
         if not self.stop_event.is_set():
             self.msg_queue.put(("FINISHED", None))
+
+    # -------------------------------------------------------------------------
+    # GUI QUEUE DISPATCHER & MATCH CARD CREATION
+    # -------------------------------------------------------------------------
 
     def _process_queue(self):
         try:

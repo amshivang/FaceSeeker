@@ -29,7 +29,7 @@ def sanitize_str(text: str) -> str:
 
 class IncidentReportPDF(FPDF):
     def header(self):
-        self.set_fill_color(32, 32, 32)
+        self.set_fill_color(32, 32, 32)  # Win11 Dark Banner
         self.rect(0, 0, 210, 24, "F")
         self.set_font("Helvetica", "B", 14)
         self.set_text_color(255, 255, 255)
@@ -56,8 +56,9 @@ def generate_pdf_report(target_image_path: str, video_path: str, matches: list, 
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
 
+        # Section 1: Source & Target Information
         pdf.set_font("Helvetica", "B", 12)
-        pdf.set_text_color(0, 120, 212)
+        pdf.set_text_color(0, 120, 212) # Win11 Accent Blue
         pdf.cell(0, 8, "1. Video & Target Metadata", ln=True)
         pdf.set_line_width(0.5)
         pdf.set_draw_color(0, 120, 212)
@@ -77,12 +78,14 @@ def generate_pdf_report(target_image_path: str, video_path: str, matches: list, 
         pdf.cell(95, 6, sanitize_str(f"Highest Match Score: {highest_score:.1f}%"), ln=True)
         pdf.ln(6)
 
+        # Section 2: Matches Table
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(0, 120, 212)
         pdf.cell(0, 8, "2. Match Event Log", ln=True)
         pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(4)
 
+        # Table Header
         pdf.set_fill_color(43, 43, 43)
         pdf.set_text_color(255, 255, 255)
         pdf.set_font("Helvetica", "B", 9)
@@ -93,6 +96,7 @@ def generate_pdf_report(target_image_path: str, video_path: str, matches: list, 
         pdf.cell(50, 7, "Bounding Box (XYWH)", border=1, align="C", fill=True)
         pdf.ln()
 
+        # Table Rows
         pdf.set_font("Helvetica", "", 9)
         pdf.set_text_color(30, 30, 30)
 

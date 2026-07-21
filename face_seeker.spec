@@ -12,18 +12,23 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 block_cipher = None
 
+# Project root directory
 project_dir = os.path.abspath(os.path.dirname(SPEC)) if 'SPEC' in locals() else os.path.abspath('.')
 
+# Resource data files to bundle
 datas = [
     (os.path.join(project_dir, 'models'), 'models'),
     (os.path.join(project_dir, 'assets'), 'assets'),
 ]
 
+# Add sample/asset image if present
 if os.path.exists(os.path.join(project_dir, 'alia.jpg')):
     datas.append((os.path.join(project_dir, 'alia.jpg'), '.'))
 
+# Collect CustomTkinter assets (fonts, theme JSONs, icons)
 datas += collect_data_files('customtkinter')
 
+# Explicitly list hidden imports for lazy-loaded dependencies
 hiddenimports = [
     'customtkinter',
     'darkdetect',
@@ -44,6 +49,7 @@ hiddenimports = [
 ]
 hiddenimports += collect_submodules('customtkinter')
 
+# Exclude heavy unused libraries to produce a fast & lightweight build
 excludes = [
     'torch',
     'torchvision',

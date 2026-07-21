@@ -75,6 +75,7 @@ def main():
     """
     logger.info("Initializing Face Seeker execution context...")
 
+    # Set working directory and module search path for frozen PyInstaller environment
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         logger.info(f"Running in PyInstaller bundle mode. MEIPASS root: {sys._MEIPASS}")
         os.chdir(sys._MEIPASS)
@@ -86,9 +87,11 @@ def main():
         if app_dir not in sys.path:
             sys.path.insert(0, app_dir)
 
+    # Verify models directory and ONNX files
     models_dir = ensure_models_dir()
     logger.info(f"Models directory verified at: {models_dir}")
 
+    # Launch UI application from ui.py
     logger.info("Importing FaceSeekerApp interface from ui module...")
     try:
         from ui import FaceSeekerApp

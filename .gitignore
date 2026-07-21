@@ -1,31 +1,31 @@
-# Generic .gitignore for C++/Python/Windows Desktop Apps
+# PyInstaller Build Output
+build/
+dist/
+*.spec.bak
 
-# Python
+# Python Bytecode & Caches
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+
+# Environments
 venv/
 env/
-.env
+ENV/
 
-# C++ / Visual Studio
-.vs/
-*.obj
-*.exe
-*.dll
-*.lib
-*.pdb
-*.ilk
-x64/
-x86/
-Debug/
-Release/
+# Large Video & Image Files (Test Assets)
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.wmv
 
-# Build folders
-build/
-dist/
-
-# OS Files
+# IDE & OS Files
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
-ehthumbs.db
+
+# Gemini / Antigravity workspace files
+.gemini/
