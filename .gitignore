@@ -1,0 +1,31 @@
+# PyInstaller Build Output
+build/
+dist/
+*.spec.bak
+
+# Python Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+venv/
+env/
+ENV/
+
+# Large Video & Image Files (Test Assets)
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.wmv
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Gemini / Antigravity workspace files
+.gemini/
