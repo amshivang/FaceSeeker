@@ -82,3 +82,13 @@ pyinstaller face_seeker.spec --noconfirm
 ## 📜 License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+<div align="center">
+  <a href="https://buymeacoffee.com/amshivang">
+    <img src="https://raw.githubusercontent.com/amshivang/amshivang/main/qr-code.png" alt="Buy Me A Coffee" width="200">
+  </a>
+  <br>
+  <strong><a href="https://buymeacoffee.com/amshivang">Support my work on Buy Me A Coffee! ☕</a></strong>
+</div>
+
