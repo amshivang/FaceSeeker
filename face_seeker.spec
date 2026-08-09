@@ -15,10 +15,8 @@ block_cipher = None
 # Project root directory
 project_dir = os.path.abspath(os.path.dirname(SPEC)) if 'SPEC' in locals() else os.path.abspath('.')
 
-# Resource data files to bundle
 datas = [
     (os.path.join(project_dir, 'models'), 'models'),
-    (os.path.join(project_dir, 'assets'), 'assets'),
     (os.path.join(project_dir, 'templates'), 'templates'),
     (os.path.join(project_dir, 'static'), 'static'),
 ]
@@ -42,9 +40,6 @@ hiddenimports = [
     'PIL.ImageDraw',
     'numpy',
     'face_engine',
-    'ui',
-    'pdf_exporter',
-    'fpdf',
     'csv',
     'queue',
     'threading',
