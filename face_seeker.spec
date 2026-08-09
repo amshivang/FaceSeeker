@@ -19,6 +19,8 @@ project_dir = os.path.abspath(os.path.dirname(SPEC)) if 'SPEC' in locals() else 
 datas = [
     (os.path.join(project_dir, 'models'), 'models'),
     (os.path.join(project_dir, 'assets'), 'assets'),
+    (os.path.join(project_dir, 'templates'), 'templates'),
+    (os.path.join(project_dir, 'static'), 'static'),
 ]
 
 # Add sample/asset image if present
@@ -46,6 +48,12 @@ hiddenimports = [
     'csv',
     'queue',
     'threading',
+    'flask',
+    'werkzeug',
+    'jinja2',
+    'tkinter.filedialog',
+    'webbrowser',
+    'webview',
 ]
 hiddenimports += collect_submodules('customtkinter')
 
@@ -59,7 +67,6 @@ excludes = [
     'pandas',
     'matplotlib',
     'notebook',
-    'jinja2',
     'fastapi',
     'streamlit',
     'altair',
@@ -105,7 +112,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=False, # Hide console since PyWebView provides a native window
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

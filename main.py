@@ -6,7 +6,11 @@ Handles sys._MEIPASS path resolution, model directory verification, and GUI laun
 import os
 import sys
 import logging
+import time
+import threading
+import webview
 from pathlib import Path
+from app import app
 
 # Configure logging for application lifecycle
 logging.basicConfig(
@@ -69,6 +73,13 @@ def ensure_models_dir() -> str:
     return models_dir
 
 
+def start_flask():
+    """Run Flask server in a background daemon thread."""
+    logger.info("Launching FaceSeeker Web UI Backend...")
+    # Run Flask without the reloader since we're bundling an app
+    app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False)
+
+
 def main():
     """
     Main application startup sequence.
@@ -91,17 +102,25 @@ def main():
     models_dir = ensure_models_dir()
     logger.info(f"Models directory verified at: {models_dir}")
 
-    # Launch UI application from ui.py
-    logger.info("Importing FaceSeekerApp interface from ui module...")
-    try:
-        from ui import FaceSeekerApp
-    except ImportError as e:
-        logger.warning(f"Could not import FaceSeekerApp directly: {e}. Trying FaceSeekerUI...")
-        from ui import FaceSeekerUI as FaceSeekerApp
-
-    logger.info("Launching FaceSeeker GUI main loop...")
-    app = FaceSeekerApp()
-    app.mainloop()
+    # Start Flask backend in a separate thread
+    flask_thread = threading.Thread(target=start_flask, daemon=True)
+    flask_thread.start()
+    
+    # Give Flask a moment to spin up before the window appears
+    time.sleep(1.0)
+    
+    # 3. Launch PyWebView Native Window
+    logger.info("Launching PyWebView Window...")
+    window = webview.create_window(
+        title='Face Seeker',
+        url='http://127.0.0.1:5000',
+        width=1200,
+        height=800,
+        min_size=(800, 600),
+        background_color='#000000' # Matches fluent dark theme
+    )
+    
+    webview.start(debug=False)
 
 
 if __name__ == "__main__":

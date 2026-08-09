@@ -119,12 +119,20 @@ class FaceEngine:
         if detection_model_path is None:
             detection_model_path = get_resource_path("models/face_detection_yunet_2023mar.onnx")
         else:
-            detection_model_path = get_resource_path(detection_model_path)
+            resolved_det = get_resource_path(detection_model_path)
+            if os.path.isdir(resolved_det):
+                detection_model_path = os.path.join(resolved_det, "face_detection_yunet_2023mar.onnx")
+            else:
+                detection_model_path = resolved_det
 
         if recognition_model_path is None:
             recognition_model_path = get_resource_path("models/face_recognition_sface_2021dec.onnx")
         else:
-            recognition_model_path = get_resource_path(recognition_model_path)
+            resolved_rec = get_resource_path(recognition_model_path)
+            if os.path.isdir(resolved_rec):
+                recognition_model_path = os.path.join(resolved_rec, "face_recognition_sface_2021dec.onnx")
+            else:
+                recognition_model_path = resolved_rec
 
         if not os.path.exists(detection_model_path):
             raise FileNotFoundError(f"YuNet detection model not found at {detection_model_path}")
