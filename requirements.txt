@@ -1,0 +1,6 @@
+opencv-python>=4.9.0
+numpy>=1.26.0
+flask>=3.0.0
+werkzeug>=3.0.0
+pywebview>=5.0
+pyinstaller>=6.0.0

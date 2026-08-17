@@ -70,6 +70,32 @@ body {
   border-radius: 12px;
 }
 
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+.pill-offline {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.pill-gpu {
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -156,6 +182,113 @@ body {
   cursor: pointer;
   transition: all 200ms var(--ease-out);
   background: rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.video-select-row {
+  display: flex;
+  gap: 10px;
+}
+
+.upload-zone-half {
+  flex: 1;
+  padding: 16px 10px;
+  font-size: 0.85rem;
+}
+
+/* Target Chips */
+.target-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.target-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.target-chip-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.target-chip-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-warning {
+  color: #fbbf24;
+  font-size: 0.9rem;
+}
+
+.target-chip-remove {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.target-chip-remove:hover {
+  color: var(--danger);
+}
+
+/* Batch Queue */
+.batch-queue {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.queue-item.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--text-primary);
+}
+
+.queue-item.done {
+  color: #34d399;
+}
+
+.queue-index {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.queue-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .upload-zone:hover {
@@ -182,11 +315,34 @@ body {
   gap: 8px;
   font-size: 0.85rem;
   color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.setting-label:last-of-type {
+  margin-bottom: 0;
 }
 
 input[type="range"] {
   width: 100%;
   accent-color: var(--accent);
+}
+
+select#perfSelect {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.setting-hint {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  line-height: 1.4;
 }
 
 /* Buttons */
@@ -258,6 +414,44 @@ input[type="range"] {
   justify-content: center;
 }
 
+.video-tabs {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 160ms var(--ease-out);
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+#reviewVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .video-placeholder {
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -273,17 +467,41 @@ input[type="range"] {
 
 /* Progress and Stats */
 .progress-bar-container {
-  height: 6px;
+  height: 10px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
 }
 
 .progress-bar-fill {
   height: 100%;
   width: 0%;
   background: var(--accent);
+  border-radius: 5px;
   transition: width 200ms linear;
+  pointer-events: none;
+}
+
+.progress-ticks {
+  position: absolute;
+  inset: 0;
+}
+
+.progress-tick {
+  position: absolute;
+  top: -3px;
+  width: 3px;
+  height: 16px;
+  background: #fbbf24;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.8);
+  cursor: pointer;
+  transform: translateX(-50%);
+}
+
+.progress-tick:hover {
+  background: #fde68a;
 }
 
 .stats-grid {
@@ -318,6 +536,33 @@ input[type="range"] {
 }
 .stat-value.highlight {
   color: var(--success);
+}
+
+/* Results Header */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-icon-small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 160ms var(--ease-out);
+}
+
+.btn-icon-small:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Matches List */
@@ -385,6 +630,106 @@ input[type="range"] {
 .match-score {
   font-size: 0.75rem;
   color: #34d399;
+}
+
+.match-target {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+/* Match Inspector Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: #17171a;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 28px;
+  width: min(520px, 90vw);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.modal-card h3 {
+  align-self: flex-start;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+.inspector-grid {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.inspector-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.inspector-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inspector-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  background: #000;
+}
+
+.inspector-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.inspector-vs {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.inspector-score {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--success);
 }
 
 /* Footer (From SecurePass) */

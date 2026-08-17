@@ -8,38 +8,50 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  
+
   <div class="app-container">
-    
+
     <!-- HEADER -->
     <header class="header animate-in delay-1">
       <div class="logo">
         <div class="logo-dot"></div>
         <span>Face Seeker</span>
       </div>
+      <div class="header-badges">
+        <span class="pill" id="hardwarePill">CPU</span>
+        <span class="pill pill-offline">Offline &amp; Air-Gapped</span>
+      </div>
     </header>
 
     <main class="main-content">
-      
+
       <!-- CONTROLS SIDEBAR -->
       <aside class="sidebar animate-in delay-2">
         <div class="control-card">
-          <h3>Target Subject</h3>
-          <p class="subtitle">Select the face to search for.</p>
+          <h3>Target Subjects</h3>
+          <p class="subtitle">Add one or more suspect photos to search for.</p>
+          <div class="target-chips" id="targetChips"></div>
           <div class="upload-zone" id="targetBtn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            <span id="targetLabel">Upload Photo</span>
+            <span id="targetLabel">Add Target Photo</span>
           </div>
         </div>
 
         <div class="control-card">
           <h3>CCTV Footage</h3>
-          <p class="subtitle">Select the video file to analyze.</p>
-          <div class="upload-zone" id="videoBtn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-            <span id="videoLabel">Select Video</span>
+          <p class="subtitle">Select a single video, or a whole folder to batch scan.</p>
+          <div class="video-select-row">
+            <div class="upload-zone upload-zone-half" id="videoBtn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+              <span id="videoLabel">Select Video</span>
+            </div>
+            <div class="upload-zone upload-zone-half" id="videoFolderBtn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              <span id="videoFolderLabel">Select Folder</span>
+            </div>
           </div>
           <div id="videoStats" class="stats-text" style="display:none;"></div>
+          <div id="batchQueue" class="batch-queue" style="display:none;"></div>
         </div>
 
         <div class="control-card">
@@ -48,6 +60,15 @@
             Cosine Similarity Threshold: <span id="threshVal">0.36</span>
             <input type="range" id="threshSlider" min="0.1" max="0.9" step="0.01" value="0.36">
           </label>
+          <label class="setting-label">
+            Processing Speed
+            <select id="perfSelect">
+              <option value="0" selected>Thorough (every frame)</option>
+              <option value="1">Balanced (skip 1 frame)</option>
+              <option value="3">Fast (skip 3 frames)</option>
+            </select>
+          </label>
+          <p class="setting-hint" id="perfHint">Analyzes every frame for maximum detection accuracy.</p>
         </div>
 
         <div class="action-buttons">
@@ -55,7 +76,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
             Start Analysis
           </button>
-          
+
           <div class="running-controls" id="runningControls" style="display: none;">
             <button id="pauseBtn" class="btn btn-secondary">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
@@ -72,16 +93,22 @@
       <!-- MAIN VIEWER -->
       <section class="viewer animate-in delay-3">
         <div class="video-container">
+          <div class="video-tabs">
+            <button class="tab-btn active" id="tabLiveBtn">Live Scan</button>
+            <button class="tab-btn" id="tabReviewBtn">Review</button>
+          </div>
           <div class="video-placeholder" id="videoPlaceholder">
             <span>Video Feed Offline</span>
           </div>
           <img id="videoStream" src="" alt="Live Video Feed" style="display: none;">
+          <video id="reviewVideo" style="display: none;" controls></video>
         </div>
-        
-        <div class="progress-bar-container">
+
+        <div class="progress-bar-container" id="progressBarContainer" title="Click to seek in Review">
           <div class="progress-bar-fill" id="progressBar"></div>
+          <div class="progress-ticks" id="progressTicks"></div>
         </div>
-        
+
         <div class="stats-grid">
           <div class="stat-box">
             <span class="stat-label">Processed</span>
@@ -104,7 +131,13 @@
 
       <!-- RESULTS SIDEBAR -->
       <aside class="results-sidebar animate-in delay-4">
-        <h3>Matches</h3>
+        <div class="results-header">
+          <h3>Matches</h3>
+          <button id="exportBtn" class="btn-icon-small" title="Export CSV Report">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export
+          </button>
+        </div>
         <div class="matches-list" id="matchesList">
           <!-- Matches will populate here -->
           <div class="empty-state">No matches yet</div>
@@ -131,6 +164,29 @@
       </div>
       <p class="footer-copy">Developed by Shivang &nbsp;·&nbsp; Advanced AI Tracking</p>
     </footer>
+  </div>
+
+  <!-- SIDE-BY-SIDE MATCH INSPECTOR MODAL -->
+  <div class="modal-overlay" id="inspectorModal" style="display:none;">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <h3>Match Inspector</h3>
+      <div class="inspector-grid">
+        <div class="inspector-col">
+          <span class="inspector-label">Target Subject</span>
+          <img id="inspectorTarget" class="inspector-img" src="" alt="Target">
+          <span class="inspector-name" id="inspectorTargetName"></span>
+        </div>
+        <div class="inspector-vs">VS</div>
+        <div class="inspector-col">
+          <span class="inspector-label">Video Face Crop</span>
+          <img id="inspectorMatch" class="inspector-img" src="" alt="Match">
+          <span class="inspector-name" id="inspectorTime"></span>
+        </div>
+      </div>
+      <div class="inspector-score" id="inspectorScore">0.0% Match</div>
+      <button class="btn btn-primary" id="inspectorJumpBtn">Jump to This Moment</button>
+    </div>
   </div>
 
   <script src="/static/app.js"></script>

@@ -111,6 +111,11 @@ def main():
     
     # 3. Launch PyWebView Native Window
     logger.info("Launching PyWebView Window...")
+    icon_path = get_resource_path(os.path.join('assets', 'icon.ico'))
+    if not os.path.exists(icon_path):
+        logger.warning(f"Window icon not found at '{icon_path}'; using default.")
+        icon_path = None
+
     window = webview.create_window(
         title='Face Seeker',
         url='http://127.0.0.1:5000',
@@ -119,8 +124,8 @@ def main():
         min_size=(800, 600),
         background_color='#000000' # Matches fluent dark theme
     )
-    
-    webview.start(debug=False)
+
+    webview.start(debug=False, icon=icon_path)
 
 
 if __name__ == "__main__":

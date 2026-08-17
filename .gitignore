@@ -29,3 +29,10 @@ Thumbs.db
 
 # Gemini / Antigravity workspace files
 .gemini/
+
+# Runtime & junk files
+uploads/
+nul
+
+# One-off build scripts
+assets/generate_icon.py

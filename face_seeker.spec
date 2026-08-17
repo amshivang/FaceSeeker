@@ -3,12 +3,11 @@
 """
 face_seeker.spec - PyInstaller Specification File for Face Seeker.
 Bundles Face Seeker into a 100% offline standalone Windows executable.
-Includes OpenCV ONNX models, CustomTkinter assets, dependencies, and path resolution.
+Includes OpenCV ONNX models, Flask/PyWebView assets, dependencies, and path resolution.
 """
 
 import os
-import sys
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_submodules
 
 block_cipher = None
 
@@ -19,38 +18,26 @@ datas = [
     (os.path.join(project_dir, 'models'), 'models'),
     (os.path.join(project_dir, 'templates'), 'templates'),
     (os.path.join(project_dir, 'static'), 'static'),
+    (os.path.join(project_dir, 'assets', 'icon.ico'), 'assets'),
 ]
-
-# Add sample/asset image if present
-if os.path.exists(os.path.join(project_dir, 'alia.jpg')):
-    datas.append((os.path.join(project_dir, 'alia.jpg'), '.'))
-
-# Collect CustomTkinter assets (fonts, theme JSONs, icons)
-datas += collect_data_files('customtkinter')
 
 # Explicitly list hidden imports for lazy-loaded dependencies
 hiddenimports = [
-    'customtkinter',
-    'darkdetect',
     'cv2',
-    'onnxruntime',
-    'PIL',
-    'PIL.Image',
-    'PIL.ImageTk',
-    'PIL.ImageDraw',
     'numpy',
     'face_engine',
+    'app',
     'csv',
+    'io',
     'queue',
     'threading',
     'flask',
     'werkzeug',
     'jinja2',
-    'tkinter.filedialog',
     'webbrowser',
     'webview',
 ]
-hiddenimports += collect_submodules('customtkinter')
+hiddenimports += collect_submodules('webview')
 
 # Exclude heavy unused libraries to produce a fast & lightweight build
 excludes = [
@@ -68,7 +55,9 @@ excludes = [
     'pyarrow',
     'weasyprint',
     'IPython',
-    'brotli'
+    'brotli',
+    'tkinter',
+    'customtkinter',
 ]
 
 a = Analysis(
@@ -113,5 +102,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=None
+    icon=os.path.join(project_dir, 'assets', 'icon.ico')
 )
