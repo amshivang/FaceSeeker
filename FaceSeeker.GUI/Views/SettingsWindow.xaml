@@ -1,0 +1,156 @@
+﻿<Window x:Class="FaceSeeker.GUI.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings"
+        Width="460"
+        Height="420"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#090A0C"
+        WindowStyle="ToolWindow">
+    <Window.Resources>
+        <ResourceDictionary Source="/Assets/Styles.xaml" />
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Engine Settings"
+                       Style="{StaticResource HeaderTitle}" />
+            <TextBlock Text="Configure detection thresholds and local socket parameters."
+                       Foreground="#64748B"
+                       FontSize="11.5"
+                       Margin="0,2,0,0" />
+        </StackPanel>
+
+        <!-- Form Items -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,6,0">
+                <!-- Frame Skip -->
+                <Border Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Frame Skip" Style="{StaticResource BodyText}" FontWeight="Medium" />
+                            <TextBlock Grid.Column="1" x:Name="FrameSkipDisplay" Text="5" Foreground="#3B82F6" FontWeight="SemiBold" FontSize="11.5" />
+                        </Grid>
+                        <Slider x:Name="FrameSkipSlider"
+                                Minimum="1"
+                                Maximum="30"
+                                Value="5"
+                                IsSnapToTickEnabled="True"
+                                TickFrequency="1"
+                                ValueChanged="OnFrameSkipChanged" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Cosine Threshold -->
+                <Border Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Cosine Threshold (SFace)" Style="{StaticResource BodyText}" FontWeight="Medium" />
+                            <TextBlock Grid.Column="1" x:Name="CosineDisplay" Text="0.363" Foreground="#3B82F6" FontWeight="SemiBold" FontSize="11.5" />
+                        </Grid>
+                        <Slider x:Name="CosineSlider"
+                                Minimum="0.30"
+                                Maximum="0.60"
+                                Value="0.363"
+                                SmallChange="0.005"
+                                LargeChange="0.02"
+                                ValueChanged="OnCosineChanged" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Duplicate Suppression -->
+                <Border Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Duplicate Alert Suppression" Style="{StaticResource BodyText}" FontWeight="Medium" />
+                            <TextBlock Grid.Column="1" x:Name="DedupeDisplay" Text="3s" Foreground="#3B82F6" FontWeight="SemiBold" FontSize="11.5" />
+                        </Grid>
+                        <Slider x:Name="DedupeSlider"
+                                Minimum="1"
+                                Maximum="10"
+                                Value="3"
+                                IsSnapToTickEnabled="True"
+                                TickFrequency="1"
+                                ValueChanged="OnDedupeChanged" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Server Port -->
+                <Border Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="TCP Port" Style="{StaticResource BodyText}" FontWeight="Medium" />
+                            <TextBlock Text="Local communication port" Foreground="#64748B" FontSize="11" />
+                        </StackPanel>
+                        <TextBox Grid.Column="1"
+                                 x:Name="PortBox"
+                                 Text="54321"
+                                 TextAlignment="Center"
+                                 FontFamily="Consolas" />
+                    </Grid>
+                </Border>
+
+                <!-- Export Folder -->
+                <Border Style="{StaticResource CardBorder}">
+                    <StackPanel>
+                        <TextBlock Text="Export Directory" Style="{StaticResource BodyText}" FontWeight="Medium" Margin="0,0,0,4" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     x:Name="ExportFolderBox"
+                                     IsReadOnly="True"
+                                     Margin="0,0,6,0" />
+                            <Button Grid.Column="1"
+                                    Content="Browse"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Click="OnBrowseExportFolderClick" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Actions -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,14,0,0">
+            <Button Content="Cancel"
+                    Style="{StaticResource SecondaryButton}"
+                    Width="75"
+                    Margin="0,0,8,0"
+                    Click="OnCancelClick" />
+            <Button Content="Save Settings"
+                    Style="{StaticResource PrimaryButton}"
+                    Width="105"
+                    Click="OnSaveClick" />
+        </StackPanel>
+    </Grid>
+</Window>

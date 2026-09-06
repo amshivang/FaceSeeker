@@ -1,0 +1,64 @@
+# Visual Studio / .NET build outputs
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]ll[Uu]sing[Nn]et[Ff]x/
+[Tt]est[Rr]esults/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+# Python build & cache artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.pyc
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+FaceSeeker.Engine/build/
+!/build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Cython intermediate C files
+FaceSeeker.Engine/BUILD_SOURCES/detector.c
+FaceSeeker.Engine/BUILD_SOURCES/recognizer.c
+FaceSeeker.Engine/BUILD_SOURCES/pipeline.c
+FaceSeeker.Engine/BUILD_SOURCES/video_scanner.c
+
+# Runtime distributions & packaging artifacts
+dist/
+publish_tmp/
+engine_obf/
+
+# OS and temporary files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.tmp
+*.log
+synthetic_*.mp4

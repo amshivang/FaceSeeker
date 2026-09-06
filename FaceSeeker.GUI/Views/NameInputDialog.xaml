@@ -1,0 +1,48 @@
+﻿<Window x:Class="FaceSeeker.GUI.Views.NameInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Target Name"
+        Width="360"
+        Height="170"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#090A0C"
+        WindowStyle="ToolWindow">
+    <Window.Resources>
+        <ResourceDictionary Source="/Assets/Styles.xaml" />
+    </Window.Resources>
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Target Person Name"
+                   Style="{StaticResource BodyText}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+
+        <TextBox Grid.Row="1"
+                 x:Name="NameBox"
+                 FontSize="12.5"
+                 KeyDown="OnKeyDown" />
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom">
+            <Button Content="Cancel"
+                    Style="{StaticResource SecondaryButton}"
+                    Width="70"
+                    Margin="0,0,8,0"
+                    Click="OnCancelClick" />
+            <Button Content="Add Target"
+                    Style="{StaticResource PrimaryButton}"
+                    Width="85"
+                    Click="OnOkClick" />
+        </StackPanel>
+    </Grid>
+</Window>

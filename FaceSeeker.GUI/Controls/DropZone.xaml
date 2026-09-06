@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="FaceSeeker.GUI.Controls.DropZone"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AllowDrop="True"
+             DragEnter="OnDragEnter"
+             DragLeave="OnDragLeave"
+             Drop="OnDrop">
+    <Border x:Name="ContainerBorder"
+            Background="#0B0D11"
+            BorderBrush="#1E232B"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12,14"
+            Cursor="Hand"
+            SnapsToDevicePixels="True">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!-- Minimal Icon Indicator -->
+            <Border Grid.Column="0"
+                    Width="24"
+                    Height="24"
+                    CornerRadius="4"
+                    Background="#161A22"
+                    BorderBrush="#252B37"
+                    BorderThickness="1"
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Center">
+                <TextBlock x:Name="IconText"
+                           Text="+"
+                           FontSize="14"
+                           FontWeight="Medium"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="#64748B" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock x:Name="LabelDisplay"
+                           Text="Drop files to import"
+                           Foreground="#CBD5E1"
+                           FontSize="12"
+                           FontWeight="Medium" />
+                <TextBlock Text="or click to browse from disk"
+                           Foreground="#64748B"
+                           FontSize="10.5"
+                           Margin="0,1,0,0" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
