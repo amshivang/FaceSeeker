@@ -194,6 +194,7 @@ namespace FaceSeeker.GUI.ViewModels
                     _bridge.OnMatch += OnMatchReceived;
                     _bridge.OnProgress += OnProgressReceived;
                     _bridge.OnVideoDone += OnVideoDoneReceived;
+                    _bridge.OnRegisterResult += OnRegisterResultReceived;
                     _bridge.OnScanComplete += OnScanCompleteReceived;
                     _bridge.OnError += OnErrorReceived;
 
@@ -226,9 +227,6 @@ namespace FaceSeeker.GUI.ViewModels
                 };
 
                 await _bridge.SendCommandAsync(scanReq);
-
-                // Start listening in background
-                _ = Task.Run(() => _bridge.ListenAsync(_cts.Token));
             }
             catch (Exception ex)
             {
@@ -492,6 +490,17 @@ namespace FaceSeeker.GUI.ViewModels
                 IsScanning = false;
                 StatusText = $"Error: {error}";
             });
+        }
+
+        private void OnRegisterResultReceived(RegisterResultMessage reg)
+        {
+            if (!reg.Success)
+            {
+                Application.Current?.Dispatcher.InvokeAsync(() =>
+                {
+                    StatusText = $"Notice: Failed to enroll target '{reg.Name}': {reg.Error}";
+                });
+            }
         }
     }
 }

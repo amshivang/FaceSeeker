@@ -1,4 +1,4 @@
-﻿// ponytail: clean process manager and socket event dispatcher using System.Text.Json
+// ponytail: clean process manager and socket event dispatcher using System.Text.Json
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -137,11 +137,24 @@ namespace FaceSeeker.GUI.Services
                 throw new TimeoutException($"Timed out attempting to connect to Python server on port {port}.");
             }
 
-            // Send ping and wait for pong
+            // Start background message listener
+            _listenCts = new CancellationTokenSource();
+            _listenTask = Task.Run(() => InternalListenAsync(_listenCts.Token));
+
+            // Send ping
             await SendCommandAsync(new SimpleCommand("ping"));
         }
 
-        public async Task ListenAsync(CancellationToken cancellationToken)
+        private CancellationTokenSource? _listenCts;
+        private Task? _listenTask;
+
+        public Task ListenAsync(CancellationToken cancellationToken = default)
+        {
+            // Backward-compatible hook: if internal listener is active, return that task
+            return _listenTask ?? Task.CompletedTask;
+        }
+
+        private async Task InternalListenAsync(CancellationToken cancellationToken)
         {
             bool scanCompleted = false;
             try
@@ -218,8 +231,16 @@ namespace FaceSeeker.GUI.Services
             {
                 if (_socketClient.IsConnected)
                 {
-                    _ = SendCommandAsync(new SimpleCommand("cancel"));
+                    // Give cancel command up to 150ms to flush before tearing down socket
+                    var cancelTask = SendCommandAsync(new SimpleCommand("cancel"));
+                    Task.WaitAny(new[] { cancelTask }, 150);
                 }
+            }
+            catch { }
+
+            try
+            {
+                _listenCts?.Cancel();
             }
             catch { }
 

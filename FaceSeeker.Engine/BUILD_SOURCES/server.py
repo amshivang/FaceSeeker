@@ -43,6 +43,12 @@ def handle_ping(conn):
 def handle_register_target(conn, msg):
     try:
         raw_b64 = msg.get("image_b64", "")
+        if not raw_b64:
+            send_json(conn, {"type": "register_result", "name": msg.get("name", ""), "success": False, "error": "Empty image data"})
+            return
+        if len(raw_b64) > 25 * 1024 * 1024:  # 25 MB payload limit
+            send_json(conn, {"type": "register_result", "name": msg.get("name", ""), "success": False, "error": "Image data exceeds 25MB limit"})
+            return
         img_bytes = base64.b64decode(raw_b64)
         np_arr = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)

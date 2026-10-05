@@ -283,5 +283,27 @@ class TestSocketServerIPC(unittest.TestCase):
             server.VideoScanner = orig_scanner
             client.close()
 
+    def test_register_target_empty_payload(self):
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(("127.0.0.1", self.test_port))
+        f = client.makefile("r", encoding="utf-8")
+
+        # Send empty image payload
+        cmd_empty = json.dumps({"cmd": "register_target", "name": "EmptyTest", "image_b64": ""}) + "\n"
+        client.sendall(cmd_empty.encode("utf-8"))
+        resp = f.readline()
+        data = json.loads(resp)
+        self.assertEqual(data.get("type"), "register_result")
+        self.assertFalse(data.get("success"))
+        self.assertIn("Empty image", data.get("error", ""))
+        client.close()
+
+    def test_video_scanner_nonexistent_file(self):
+        pipe = FaceSearchPipeline()
+        scanner = VideoScanner(pipe)
+        res = scanner.scan("non_existent_file_xyz123.mp4")
+        self.assertEqual(res.total_matches, 0)
+        self.assertIn("File not found", res.error)
+
 if __name__ == "__main__":
     unittest.main()

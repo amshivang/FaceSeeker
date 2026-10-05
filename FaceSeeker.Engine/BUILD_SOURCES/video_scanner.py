@@ -1,4 +1,4 @@
-﻿# ponytail: clean VideoScanner frame loop with minimal overhead
+# ponytail: clean VideoScanner frame loop with minimal overhead
 # FIX: LEAK-05 — try/finally ensures cap.release() even on exception
 import os
 import cv2
@@ -30,7 +30,8 @@ class VideoScanner:
         if not cap.isOpened():
             return VideoComplete(video_path=video_path, total_matches=0, error="Failed to open video")
 
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        raw_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        total_frames = int(raw_frames) if raw_frames > 0 and raw_frames == raw_frames else 0
         fps = cap.get(cv2.CAP_PROP_FPS)
         if fps <= 0 or fps != fps:  # handle NaN or <= 0
             fps = 30.0

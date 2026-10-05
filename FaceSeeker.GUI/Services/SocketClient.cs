@@ -14,6 +14,7 @@ namespace FaceSeeker.GUI.Services
         private StreamReader? _reader;
         private StreamWriter? _writer;
         private readonly object _lock = new();
+        private readonly System.Threading.SemaphoreSlim _sendLock = new(1, 1);
 
         public bool IsConnected => _client != null && _client.Connected;
 
@@ -29,8 +30,16 @@ namespace FaceSeeker.GUI.Services
 
         public async Task SendAsync(string json)
         {
-            if (_writer == null) throw new InvalidOperationException("Socket is not connected.");
-            await _writer.WriteLineAsync(json);
+            await _sendLock.WaitAsync();
+            try
+            {
+                if (_writer == null) throw new InvalidOperationException("Socket is not connected.");
+                await _writer.WriteLineAsync(json);
+            }
+            finally
+            {
+                _sendLock.Release();
+            }
         }
 
         public async Task<string?> ReceiveLineAsync(System.Threading.CancellationToken cancellationToken = default)
