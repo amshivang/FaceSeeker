@@ -1,14 +1,20 @@
-# 🛡️ Face Seeker — Target Face Detector for Forensic Surveillance Analysis
+<div align="center">
 
-[![.NET 8](https://img.shields.io/badge/.NET-8.0%20WPF-512BD4.svg)](https://dotnet.microsoft.com/)
-[![Python Version](https://img.shields.io/badge/python-3.12%2B-3776AB.svg)](https://python.org)
-[![OpenCV](https://img.shields.io/badge/OpenCV-YuNet%20%2B%20SFace-5C3EE8.svg)](https://opencv.org)
-[![Offline Security](https://img.shields.io/badge/Security-100%25%20Offline%20Air--Gapped-success.svg)](#)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+  <img src="FaceSeeker.GUI/Assets/icon.png" width="96" height="96" alt="Face Seeker Logo" />
 
-**Face Seeker** is a 100% offline, air-gapped computer vision desktop application engineered for law enforcement agencies, forensic investigators, and security teams. It automates the task of scanning hours of surveillance CCTV footage to locate specific target subjects, replacing tedious manual video scrubbing with high-speed deep learning inference (**35–50+ FPS**).
+  # Face Seeker
+  **100% Offline Target Face Detector for Law Enforcement & Forensic Surveillance Analysis**
 
-Version **2.0.0** introduces a complete architectural rewrite, pairing a native **C# .NET 8 WPF** cockpit with a dedicated **Python Computer Vision Engine** communicating over asynchronous local IPC sockets.
+  <p align="center">
+    <a href="https://dotnet.microsoft.com/"><img src="https://img.shields.io/badge/.NET-8.0_WPF-512BD4?logo=dotnet&logoColor=white" alt=".NET 8.0 WPF" /></a>
+    <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.12_%7C_3.14-3776AB?logo=python&logoColor=white" alt="Python 3.12 | 3.14" /></a>
+    <a href="https://opencv.org"><img src="https://img.shields.io/badge/OpenCV-YuNet_%2B_SFace-5C3EE8?logo=opencv&logoColor=white" alt="OpenCV YuNet + SFace" /></a>
+    <a href="#-privacy--security"><img src="https://img.shields.io/badge/Security-100%25_Offline_Air--Gapped-2ea44f" alt="100% Offline Air-Gapped" /></a>
+    <a href="https://github.com/amshivang/FaceSeeker/releases/latest"><img src="https://img.shields.io/badge/Release-v2.0.0-blue?logo=github" alt="Release v2.0.0" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow" alt="License: MIT" /></a>
+  </p>
+
+</div>
 
 ---
 
