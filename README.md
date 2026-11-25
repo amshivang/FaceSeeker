@@ -57,7 +57,7 @@ Face Seeker automates this workflow with high-precision deep learning inference 
 - **Instant Non-Blocking Cancellation**: Engine cancellation commands take effect immediately without locking media handles or hanging the GUI.
 - **Evidentiary Export Suite**: One-click export to culture-invariant CSV, structured forensic JSON, and grouped TXT reports.
 - **Target In-Memory Pre-scaling**: Suspect reference photos are scaled to 1000px JPEG in memory, reducing IPC payload overhead by 98%.
-- **Comprehensive Automated Test Coverage**: Built-in test suites comprising **24 C# unit tests** (`MSTest`) and **11 Python engine tests** (`unittest`).
+- **Comprehensive Automated Test Coverage**: Built-in test suites comprising **20 C# unit tests** (`MSTest`) and **13 Python engine tests** (`unittest`).
 
 ---
 
@@ -88,7 +88,7 @@ Face Seeker automates this workflow with high-precision deep learning inference 
 | **Face Detection AI** | YuNet ONNX | OpenCV DNN | Ultra-lightweight anchor-based detector with 5-point facial landmark regression |
 | **Face Recognition AI**| SFace ONNX | OpenCV DNN | 128-dimensional normalized embedding extractor with Cosine Similarity matching |
 | **Video Decoding** | OpenCV `VideoCapture` | 4.10+ | Multi-format video reading (`.mp4`, `.avi`, `.mkv`, `.mov`, `.wmv`) |
-| **Automated Testing** | MSTest & Python `unittest`| Native | 35 automated tests validating models, services, IPC protocol, and pipelines |
+| **Automated Testing** | MSTest & Python `unittest`| Native | 33 automated tests validating models, services, IPC protocol, and pipelines |
 
 ---
 
@@ -163,13 +163,13 @@ The output will be placed in `dist/FaceSeeker.exe`.
 ```bash
 dotnet test FaceSeeker.sln
 ```
-Executes 24 unit tests covering `ExportService` (CSV formatting, culture invariance), `AppSettings` persistence, `MatchResultViewModel` mapping, and `SocketMessages` JSON serialization.
+Executes 20 unit tests covering `ExportService` (CSV formatting, culture invariance), `AppSettings` persistence, `MatchResultViewModel` mapping, and `SocketMessages` JSON serialization.
 
 ### Python Engine Tests
 ```bash
 python tests/test_engine.py
 ```
-Executes 11 automated tests covering YuNet detection, SFace embeddings, 1:N multi-target winner logic, video scanner loops, and socket IPC communication.
+Executes 13 automated tests covering YuNet detection, SFace embeddings, 1:N multi-target winner logic, video scanner loops, and socket IPC communication.
 
 ---
 

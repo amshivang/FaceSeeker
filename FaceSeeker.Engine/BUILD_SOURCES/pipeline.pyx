@@ -1,4 +1,4 @@
-﻿# ponytail: clean FaceSearchPipeline tying detector and recognizer together
+# ponytail: clean FaceSearchPipeline tying detector and recognizer together
 # FIX: BUG-12 — threading.Lock around self.targets to prevent concurrent iteration/mutation crashes
 import base64
 import threading
@@ -23,11 +23,13 @@ class FaceSearchPipeline:
         self.recognizer = FaceRecognizer(model_path=sface_model, cosine_threshold=cosine_threshold)
         self.targets: Dict[str, List[np.ndarray]] = {}
         self._lock = threading.Lock()
+        self._detect_lock = threading.Lock()
 
     def register_target(self, name: str, image: np.ndarray) -> bool:
         if image is None or image.size == 0:
             return False
-        detections = self.detector.detect(image)
+        with self._detect_lock:
+            detections = self.detector.detect(image)
         if not detections:
             return False
 
@@ -65,7 +67,8 @@ class FaceSearchPipeline:
             # Snapshot targets reference for thread-safe iteration
             targets_snapshot = {name: list(embeddings) for name, embeddings in self.targets.items()}
 
-        detections = self.detector.detect(frame)
+        with self._detect_lock:
+            detections = self.detector.detect(frame)
         if not detections:
             return results
 
@@ -78,34 +81,40 @@ class FaceSearchPipeline:
             if embedding is None:
                 continue
 
+            best_target = None
+            best_score = -1.0
             for target_name, embeddings in targets_snapshot.items():
                 if not embeddings:
                     continue
-                max_score = max(self.recognizer.match_score(embedding, t_emb) for t_emb in embeddings)
-                if max_score >= self.recognizer.cosine_threshold:
-                    x = int(det[0])
-                    y = int(det[1])
-                    w = int(det[2])
-                    h = int(det[3])
+                score = max(self.recognizer.match_score(embedding, t_emb) for t_emb in embeddings)
+                if score > best_score:
+                    best_score = score
+                    best_target = target_name
 
-                    # Bounds clamping
-                    x1 = max(0, min(x, W - 1))
-                    y1 = max(0, min(y, H - 1))
-                    x2 = max(x1 + 1, min(x + w, W))
-                    y2 = max(y1 + 1, min(y + h, H))
-                    crop = frame[y1:y2, x1:x2]
+            if best_target is not None and best_score >= self.recognizer.cosine_threshold:
+                x = int(det[0])
+                y = int(det[1])
+                w = int(det[2])
+                h = int(det[3])
 
-                    thumb_b64 = self._encode_thumbnail(crop)
-                    match = FaceMatch(
-                        target_name=target_name,
-                        video_path=video_path,
-                        frame_number=int(frame_num),
-                        timestamp_str=timestamp_str,
-                        confidence=round(float(max_score), 4),
-                        thumbnail_b64=thumb_b64,
-                        bbox=[x, y, w, h]
-                    )
-                    results.append(match)
+                # Bounds clamping
+                x1 = max(0, min(x, W - 1))
+                y1 = max(0, min(y, H - 1))
+                x2 = max(x1 + 1, min(x + w, W))
+                y2 = max(y1 + 1, min(y + h, H))
+                crop = frame[y1:y2, x1:x2]
+
+                thumb_b64 = self._encode_thumbnail(crop)
+                match = FaceMatch(
+                    target_name=best_target,
+                    video_path=video_path,
+                    frame_number=int(frame_num),
+                    timestamp_str=timestamp_str,
+                    confidence=round(float(best_score), 4),
+                    thumbnail_b64=thumb_b64,
+                    bbox=[x, y, w, h]
+                )
+                results.append(match)
         return results
 
     def _encode_thumbnail(self, crop: np.ndarray) -> str:
@@ -115,7 +124,7 @@ class FaceSearchPipeline:
         th_h, th_w = crop.shape[:2]
         if th_w > 120 or th_h > 120:
             scale = 120.0 / max(th_w, th_h)
-            crop = cv2.resize(crop, (int(th_w * scale), int(th_h * scale)), interpolation=cv2.INTER_AREA)
+            crop = cv2.resize(crop, (max(1, int(round(th_w * scale))), max(1, int(round(th_h * scale)))), interpolation=cv2.INTER_AREA)
         params = [int(cv2.IMWRITE_JPEG_QUALITY), config.THUMBNAIL_QUALITY]
         success, buf = cv2.imencode('.jpg', crop, params)
         if not success:

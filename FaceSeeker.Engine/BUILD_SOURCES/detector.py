@@ -25,8 +25,8 @@ class FaceDetector:
         h, w = frame.shape[:2]
         if max(h, w) > max_dim:
             scale = max_dim / float(max(h, w))
-            det_w = int(round(w * scale))
-            det_h = int(round(h * scale))
+            det_w = max(1, int(round(w * scale)))
+            det_h = max(1, int(round(h * scale)))
             det_frame = cv2.resize(frame, (det_w, det_h), interpolation=cv2.INTER_AREA)
             self.detector.setInputSize((det_w, det_h))
             _, faces = self.detector.detect(det_frame)

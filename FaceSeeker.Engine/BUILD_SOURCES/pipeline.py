@@ -23,11 +23,13 @@ class FaceSearchPipeline:
         self.recognizer = FaceRecognizer(model_path=sface_model, cosine_threshold=cosine_threshold)
         self.targets: Dict[str, List[np.ndarray]] = {}
         self._lock = threading.Lock()
+        self._detect_lock = threading.Lock()
 
     def register_target(self, name: str, image: np.ndarray) -> bool:
         if image is None or image.size == 0:
             return False
-        detections = self.detector.detect(image)
+        with self._detect_lock:
+            detections = self.detector.detect(image)
         if not detections:
             return False
 
@@ -65,7 +67,8 @@ class FaceSearchPipeline:
             # Snapshot targets reference for thread-safe iteration
             targets_snapshot = {name: list(embeddings) for name, embeddings in self.targets.items()}
 
-        detections = self.detector.detect(frame)
+        with self._detect_lock:
+            detections = self.detector.detect(frame)
         if not detections:
             return results
 
@@ -121,7 +124,7 @@ class FaceSearchPipeline:
         th_h, th_w = crop.shape[:2]
         if th_w > 120 or th_h > 120:
             scale = 120.0 / max(th_w, th_h)
-            crop = cv2.resize(crop, (int(th_w * scale), int(th_h * scale)), interpolation=cv2.INTER_AREA)
+            crop = cv2.resize(crop, (max(1, int(round(th_w * scale))), max(1, int(round(th_h * scale)))), interpolation=cv2.INTER_AREA)
         params = [int(cv2.IMWRITE_JPEG_QUALITY), config.THUMBNAIL_QUALITY]
         success, buf = cv2.imencode('.jpg', crop, params)
         if not success:
